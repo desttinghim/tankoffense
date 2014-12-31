@@ -1,0 +1,30 @@
+
+project: {
+	name: 'Tank Offense',
+	version: '0.0.1',
+	author: 'Desttinghim',
+
+	app: {
+		name: 'tankoffense',
+		package: 'net.dimnstudios.tankoffense'
+	},
+
+	build: {
+		dependencies: {
+			luxe: '*'
+		}
+	},
+
+	files: {
+		config: 'config.json',
+		assets: 'assets/'
+	}
+},
+
+if: {
+	web: {
+		build: {
+			flags:['--dce full']
+		}
+	}
+}
