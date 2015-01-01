@@ -1,0 +1,2 @@
+ -Darch-32="1" -Darch_32="1" -Ddesktop="1" -Dhaxe3="1" -Dhaxe_ver="3.103" -Dhxcpp="1" -Dhxcpp_api_level="311" -Dhxcpp_static_std="1" -Dluxe="1" -Dluxe_native="1" -Dno-compilation="1" -Dno_compilation="1" -Dparcel_thread_disabled="1" -Dsnow="1" -Dsnow_audio_openal="1" -Dsnow_input_sdl="1" -Dsnow_native="1" -Dsnow_window_sdl="1" -Dwindows="1"
+C:\HaxeToolkit\haxe\lib\hxcpp/3,1,48/
