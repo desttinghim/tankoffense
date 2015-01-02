@@ -86,7 +86,7 @@ class Main extends luxe.Game
 		trace("Unit created.");
 		var unitNum = units.length;
 
-		units.push(new Object({
+		units.push(new Gameobject({
 			name: 'unit' + unitNum,
 			texture: image,
 			pos: new Vector( xpos, ypos ),
