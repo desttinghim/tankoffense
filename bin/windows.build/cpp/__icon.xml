@@ -1,5 +1,0 @@
-<xml>
-	<target id="haxe" tool="linker" toolid="exe">
-		<flag value="icon.res"/>
-	</target>
-</xml>
