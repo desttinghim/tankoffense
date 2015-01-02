@@ -8,11 +8,11 @@ class Movement extends Component {
 	public var velocity:Vector;
 	private var sprite:Sprite;
 	
-	public function new( xspeed, yspeed ):Void {
+	public function new( speed : Vector ):Void {
 
 		super({name:"movement"});
 
-		velocity = new Vector(xspeed,yspeed);
+		velocity = speed;
 	}
 	override function init() {
 		//the function that started it all

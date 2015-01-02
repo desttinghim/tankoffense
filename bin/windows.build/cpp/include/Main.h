@@ -16,6 +16,7 @@ HX_DECLARE_CLASS1(luxe,Sprite)
 HX_DECLARE_CLASS1(luxe,Visual)
 HX_DECLARE_CLASS2(luxe,resource,Resource)
 HX_DECLARE_CLASS2(luxe,resource,ResourceManager)
+HX_DECLARE_CLASS1(phoenix,Rectangle)
 HX_DECLARE_CLASS1(phoenix,Texture)
 
 
@@ -41,8 +42,14 @@ class HXCPP_CLASS_ATTRIBUTES  Main_obj : public ::luxe::Game_obj{
 		void __Visit(HX_VISIT_PARAMS);
 		::String __ToString() const { return HX_CSTRING("Main"); }
 
-		::luxe::Sprite player;
 		::phoenix::Texture image;
+		bool loaded;
+		Array< ::Dynamic > units;
+		Array< ::Dynamic > rows;
+		Float gameFieldWidth;
+		bool enemyAttack;
+		int playerSide;
+		int enemySide;
 		virtual Dynamic config( Dynamic config);
 
 		virtual Void ready( );
@@ -50,8 +57,8 @@ class HXCPP_CLASS_ATTRIBUTES  Main_obj : public ::luxe::Game_obj{
 		virtual Void assets_loaded( ::luxe::Parcel _);
 		Dynamic assets_loaded_dyn();
 
-		virtual Void create_player( );
-		Dynamic create_player_dyn();
+		virtual Void create_unit( Float xpos,Float ypos,Float speed,Dynamic side);
+		Dynamic create_unit_dyn();
 
 		virtual Void update( Float delta);
 

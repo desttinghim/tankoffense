@@ -205,8 +205,6 @@
 #include <luxe/Parcel.h>
 #include <luxe/resource/ResourceManager.h>
 #include <luxe/NineSlice.h>
-#include <luxe/Sprite.h>
-#include <luxe/Visual.h>
 #include <luxe/Log.h>
 #include <luxe/Input.h>
 #include <luxe/InputType.h>
@@ -222,11 +220,7 @@
 #include <luxe/Core.h>
 #include <snow/App.h>
 #include <luxe/_Core/CoreThreadRequest.h>
-#include <luxe/Component.h>
-#include <luxe/ID.h>
 #include <luxe/Camera.h>
-#include <luxe/Entity.h>
-#include <luxe/Objects.h>
 #include <luxe/SizeMode.h>
 #include <luxe/Audio.h>
 #include <hxcpp/StaticZlib.h>
@@ -262,7 +256,14 @@
 #include <StringTools.h>
 #include <StringBuf.h>
 #include <Std.h>
+#include <Side.h>
 #include <Reflect.h>
+#include <Object.h>
+#include <luxe/Sprite.h>
+#include <luxe/Visual.h>
+#include <luxe/Entity.h>
+#include <luxe/Objects.h>
+#include <Movement.h>
 #include <IMap.h>
 #include <Main.h>
 #include <luxe/Game.h>
@@ -271,6 +272,9 @@
 #include <Luxe.h>
 #include <List.h>
 #include <Lambda.h>
+#include <Hitbox.h>
+#include <luxe/Component.h>
+#include <luxe/ID.h>
 #include <EReg.h>
 #include <cpp/Lib.h>
 
@@ -485,8 +489,6 @@ hx::RegisterResources( hx::GetResources() );
 ::luxe::Parcel_obj::__register();
 ::luxe::resource::ResourceManager_obj::__register();
 ::luxe::NineSlice_obj::__register();
-::luxe::Sprite_obj::__register();
-::luxe::Visual_obj::__register();
 ::luxe::Log_obj::__register();
 ::luxe::Input_obj::__register();
 ::luxe::InputType_obj::__register();
@@ -502,11 +504,7 @@ hx::RegisterResources( hx::GetResources() );
 ::luxe::Core_obj::__register();
 ::snow::App_obj::__register();
 ::luxe::_Core::CoreThreadRequest_obj::__register();
-::luxe::Component_obj::__register();
-::luxe::ID_obj::__register();
 ::luxe::Camera_obj::__register();
-::luxe::Entity_obj::__register();
-::luxe::Objects_obj::__register();
 ::luxe::SizeMode_obj::__register();
 ::luxe::Audio_obj::__register();
 ::hxcpp::StaticZlib_obj::__register();
@@ -542,7 +540,14 @@ hx::RegisterResources( hx::GetResources() );
 ::StringTools_obj::__register();
 ::StringBuf_obj::__register();
 ::Std_obj::__register();
+::Side_obj::__register();
 ::Reflect_obj::__register();
+::Object_obj::__register();
+::luxe::Sprite_obj::__register();
+::luxe::Visual_obj::__register();
+::luxe::Entity_obj::__register();
+::luxe::Objects_obj::__register();
+::Movement_obj::__register();
 ::IMap_obj::__register();
 ::Main_obj::__register();
 ::luxe::Game_obj::__register();
@@ -551,6 +556,9 @@ hx::RegisterResources( hx::GetResources() );
 ::Luxe_obj::__register();
 ::List_obj::__register();
 ::Lambda_obj::__register();
+::Hitbox_obj::__register();
+::luxe::Component_obj::__register();
+::luxe::ID_obj::__register();
 ::EReg_obj::__register();
 ::cpp::Lib_obj::__register();
 ::hxcpp::StaticRegexp_obj::__init__();
@@ -562,6 +570,9 @@ hx::RegisterResources( hx::GetResources() );
 ::EReg_obj::__boot();
 ::cpp::vm::Thread_obj::__boot();
 ::haxe::Log_obj::__boot();
+::luxe::ID_obj::__boot();
+::luxe::Component_obj::__boot();
+::Hitbox_obj::__boot();
 ::Lambda_obj::__boot();
 ::List_obj::__boot();
 ::Luxe_obj::__boot();
@@ -570,7 +581,14 @@ hx::RegisterResources( hx::GetResources() );
 ::luxe::Game_obj::__boot();
 ::Main_obj::__boot();
 ::IMap_obj::__boot();
+::Movement_obj::__boot();
+::luxe::Objects_obj::__boot();
+::luxe::Entity_obj::__boot();
+::luxe::Visual_obj::__boot();
+::luxe::Sprite_obj::__boot();
+::Object_obj::__boot();
 ::Reflect_obj::__boot();
+::Side_obj::__boot();
 ::Std_obj::__boot();
 ::StringBuf_obj::__boot();
 ::StringTools_obj::__boot();
@@ -604,11 +622,7 @@ hx::RegisterResources( hx::GetResources() );
 ::hxcpp::StaticZlib_obj::__boot();
 ::luxe::Audio_obj::__boot();
 ::luxe::SizeMode_obj::__boot();
-::luxe::Objects_obj::__boot();
-::luxe::Entity_obj::__boot();
 ::luxe::Camera_obj::__boot();
-::luxe::ID_obj::__boot();
-::luxe::Component_obj::__boot();
 ::luxe::_Core::CoreThreadRequest_obj::__boot();
 ::snow::App_obj::__boot();
 ::luxe::Core_obj::__boot();
@@ -624,8 +638,6 @@ hx::RegisterResources( hx::GetResources() );
 ::luxe::InputType_obj::__boot();
 ::luxe::Input_obj::__boot();
 ::luxe::Log_obj::__boot();
-::luxe::Visual_obj::__boot();
-::luxe::Sprite_obj::__boot();
 ::luxe::NineSlice_obj::__boot();
 ::luxe::resource::ResourceManager_obj::__boot();
 ::luxe::Parcel_obj::__boot();

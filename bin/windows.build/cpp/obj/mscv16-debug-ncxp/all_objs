@@ -203,8 +203,6 @@ obj/mscv16-debug-ncxp/07f83baf_ParcelProgress.obj
 obj/mscv16-debug-ncxp/07f83baf_Parcel.obj
 obj/mscv16-debug-ncxp/5dd2328d_ResourceManager.obj
 obj/mscv16-debug-ncxp/07f83baf_NineSlice.obj
-obj/mscv16-debug-ncxp/07f83baf_Sprite.obj
-obj/mscv16-debug-ncxp/07f83baf_Visual.obj
 obj/mscv16-debug-ncxp/07f83baf_Log.obj
 obj/mscv16-debug-ncxp/07f83baf_Input.obj
 obj/mscv16-debug-ncxp/07f83baf_InputType.obj
@@ -220,11 +218,7 @@ obj/mscv16-debug-ncxp/07f83baf_Debug.obj
 obj/mscv16-debug-ncxp/07f83baf_Core.obj
 obj/mscv16-debug-ncxp/d95ee652_App.obj
 obj/mscv16-debug-ncxp/b867699d_CoreThreadRequest.obj
-obj/mscv16-debug-ncxp/07f83baf_Component.obj
-obj/mscv16-debug-ncxp/07f83baf_ID.obj
 obj/mscv16-debug-ncxp/07f83baf_Camera.obj
-obj/mscv16-debug-ncxp/07f83baf_Entity.obj
-obj/mscv16-debug-ncxp/07f83baf_Objects.obj
 obj/mscv16-debug-ncxp/07f83baf_SizeMode.obj
 obj/mscv16-debug-ncxp/07f83baf_Audio.obj
 obj/mscv16-debug-ncxp/c4fbab6d_StaticZlib.obj
@@ -260,7 +254,14 @@ obj/mscv16-debug-ncxp/6f7d9586_Sys.obj
 obj/mscv16-debug-ncxp/6f7d9586_StringTools.obj
 obj/mscv16-debug-ncxp/6f7d9586_StringBuf.obj
 obj/mscv16-debug-ncxp/6f7d9586_Std.obj
+obj/mscv16-debug-ncxp/6f7d9586_Side.obj
 obj/mscv16-debug-ncxp/6f7d9586_Reflect.obj
+obj/mscv16-debug-ncxp/6f7d9586_Object.obj
+obj/mscv16-debug-ncxp/07f83baf_Sprite.obj
+obj/mscv16-debug-ncxp/07f83baf_Visual.obj
+obj/mscv16-debug-ncxp/07f83baf_Entity.obj
+obj/mscv16-debug-ncxp/07f83baf_Objects.obj
+obj/mscv16-debug-ncxp/6f7d9586_Movement.obj
 obj/mscv16-debug-ncxp/6f7d9586_IMap.obj
 obj/mscv16-debug-ncxp/6f7d9586_Main.obj
 obj/mscv16-debug-ncxp/07f83baf_Game.obj
@@ -269,6 +270,9 @@ obj/mscv16-debug-ncxp/6f7d9586_LuxeApp.obj
 obj/mscv16-debug-ncxp/6f7d9586_Luxe.obj
 obj/mscv16-debug-ncxp/6f7d9586_List.obj
 obj/mscv16-debug-ncxp/6f7d9586_Lambda.obj
+obj/mscv16-debug-ncxp/6f7d9586_Hitbox.obj
+obj/mscv16-debug-ncxp/07f83baf_Component.obj
+obj/mscv16-debug-ncxp/07f83baf_ID.obj
 obj/mscv16-debug-ncxp/6f7d9586_EReg.obj
 obj/mscv16-debug-ncxp/f9d52566_Lib.obj
 obj/mscv16-debug-ncxp/6f7d9586___boot__.obj
