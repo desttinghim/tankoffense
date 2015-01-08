@@ -7,5 +7,6 @@ class Health extends Component {
 
 	public function new(healthAmount:Int) {
 		health = healthAmount;
+		super({name:"health"});
 	}
 }

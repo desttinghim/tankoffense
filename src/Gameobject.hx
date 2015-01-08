@@ -10,8 +10,8 @@ class Gameobject extends Sprite {
 	@:isVar public var movement (default, set): Movement = new Movement(new Vector(0,0));
 	@:isVar public var side (default, set): Side = new Side(0);
 	@:isVar public var health (default, set): Health = new Health(10);
+	@:isVar public var attack (default, set): Attack = new Attack(10);
 	
-	//Figure out how to add more components
 	public function new(options:ObjectOptions) {
 
 		if(options.hitbox != null) {
@@ -30,6 +30,10 @@ class Gameobject extends Sprite {
 			health = new Health(options.health);
 		}
 
+		if(options.attack != null) {
+			attack = new Attack(options.attack);
+		}
+
 		super( options );
 	}
 
@@ -43,6 +47,12 @@ class Gameobject extends Sprite {
 		}
 		if(side != null) {
 			add(side);
+		}
+		if(health != null) {
+			add(health);
+		}
+		if(attack != null) {
+			add(attack);
 		}
 		
 	}
@@ -72,6 +82,13 @@ class Gameobject extends Sprite {
 
 		health = _health;
 		return health;
+
+	}
+
+	function set_attack(_attack:Attack) {
+
+		attack = _attack;
+		return attack;
 
 	}
 }

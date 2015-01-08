@@ -29,7 +29,7 @@ class Main extends luxe.Game
 	var gameFieldHeight : Float;
 	var enemyAttack : Bool = true;
 	var playerSide : Int = 1;
-	var enemySide : Int = 2;
+	var enemySide : Int = 4;
 
 	override function config( config:AppConfig ):AppConfig {
 		
@@ -84,7 +84,7 @@ class Main extends luxe.Game
 
 		gameFieldHeight = Luxe.screen.h * 2;
 
-		Luxe.camera.bounds = new Rectangle( -10, 0, 470, gameFieldHeight );
+		Luxe.camera.bounds = new Rectangle( 0, 0, 480, gameFieldHeight + Luxe.screen.h / 2 );
 
 		loaded = true;
 	}
@@ -101,8 +101,12 @@ class Main extends luxe.Game
 			movement: new Vector( 0, speed ),
 			hitbox: new Rectangle( 0, 0, 64, 64 ),
 			side: side,
-			health: 50
+			health: 50,
+			attack: 11 - side
 		}));
+		if(side == enemySide) {
+			units[unitNum].rotation_z = 45;
+		}
 		//collisionGroup.push(units[unitNum].get('hitbox').hitbox);
 	}
 	
@@ -148,6 +152,16 @@ class Main extends luxe.Game
 			create_unit( rows[rand].x + rows[rand].w / 2, 0, 200, enemySide);
 			enemyAttack = false;
 		}
+
+		for(i in units) {
+			if(i.get('health') != null) {
+				if(i.get('health').health <= 0) {
+					//Add stuff to destroy the object
+					i.destroy();
+					units.remove(i);
+				}
+			}
+		}
 	}
 
 	function collisionUpdate( delta:Float ) {
@@ -158,18 +172,15 @@ class Main extends luxe.Game
 			for(a in units) {
 				if(i.get('hitbox') != null && a.get('hitbox') != null && i != a) {
 					if(theseOverlap(i.get('hitbox').hitbox , a.get('hitbox').hitbox)) {
-						collisions.push(i);
-						otherCollisions.push(a);
+						
+						i.get('movement').stopped = true;
+						a.get('movement').stopped = true;
+
+						a.get('health').health -= i.get('attack').attack;
+
 					}
 				}
 			}
-		}
-
-		for(i in collisions) {
-			if(i.get('movement').velocity.y != 0) {
-				i.get('movement').velocity.y = 0;
-			}
-			
 		}
 
 	}
