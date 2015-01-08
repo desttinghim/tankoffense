@@ -25,7 +25,8 @@ class Main extends luxe.Game
 	var loaded : Bool = false;
 	var units : Array<Sprite> = [];
 	var rows : Array<Rectangle> = [];
-	var gameFieldWidth : Float;
+	var collisionGroup : Array<Rectangle> = [];
+	var gameFieldHeight : Float;
 	var enemyAttack : Bool = true;
 	var playerSide : Int = 1;
 	var enemySide : Int = 2;
@@ -48,18 +49,24 @@ class Main extends luxe.Game
 
 	override function ready() {
 
-		var json_asset = Luxe.loadJSON('assets/parcel.json');
+		//Must figure out this parcel problem
 
-		var preload = new Parcel();
-			preload.from_json(json_asset.json);
 
-		new ParcelProgress({
-			parcel: preload,
-			background: new Color(1,1,1,0.85),
-			oncomplete: assets_loaded
-		});
+		// var json_asset = Luxe.loadJSON('assets/parcel.json');
 
-		preload.load();
+		// var preload = new Parcel();
+		// 	preload.from_json(json_asset.json);
+
+		// new ParcelProgress({
+		// 	parcel: preload,
+		// 	background: new Color(1,1,1,0.85),
+		// 	oncomplete: assets_loaded
+		// });
+
+		// preload.load();
+		image = Luxe.loadTexture('assets/testingsquare.png');
+
+		image.onload = assets_loaded;
 
 	}
 
@@ -72,12 +79,12 @@ class Main extends luxe.Game
 		Luxe.input.bind_mouse('select', MouseButton.left);
 
 		for( i in 0...3 ) {
-			rows[i] = new Rectangle( 0, Luxe.screen.h * i / 3, Luxe.screen.w, Luxe.screen.h / 3 );
+			rows[i] = new Rectangle( Luxe.screen.w * i / 3, 0, Luxe.screen.w / 3, Luxe.screen.h );
 		}
 
-		gameFieldWidth = Luxe.screen.h * 5;
+		gameFieldHeight = Luxe.screen.h * 2;
 
-		Luxe.camera.bounds = new Rectangle( 0, 0, gameFieldWidth, Luxe.screen.h );
+		Luxe.camera.bounds = new Rectangle( -10, 0, 470, gameFieldHeight );
 
 		loaded = true;
 	}
@@ -93,46 +100,18 @@ class Main extends luxe.Game
 			size: new Vector( 64, 64 ),
 			movement: new Vector( 0, speed ),
 			hitbox: new Rectangle( 0, 0, 64, 64 ),
-			side: side
-			}));
-		// units.push(new Sprite({
-		// 			name: 'player' + unitNum,
-		// 			texture: image,
-		// 			pos: new Vector( xpos, ypos),
-		// 			size: new Vector(64,64)
-		// 		}));
-		// units[unitNum].add(new Movement( speed, 0 ));
-		//units[unitNum].add(new Sid)
+			side: side,
+			health: 50
+		}));
+		//collisionGroup.push(units[unitNum].get('hitbox').hitbox);
 	}
 	
 	override function update( delta:Float ) {
 
 		if(!loaded) return;
 
-		//Create units on button presses
-		if(Luxe.input.inputreleased('select')) {
-			if( rows[0].point_inside(Luxe.mouse) ) {
-				create_unit(0,  rows[0].y + rows[0].h / 2, 200, playerSide );
-			} else if( rows[1].point_inside(Luxe.mouse) ) {
-				create_unit(0,  rows[1].y + rows[1].h / 2, 200, playerSide );
-			} else if( rows[2].point_inside(Luxe.mouse) ){
-				create_unit(0,  rows[2].y + rows[2].h / 2, 200, playerSide );
-			}
-		}
-
-		if(Luxe.input.keydown(Key.right)) {
-			Luxe.camera.pos.x += 300 * delta;
-		}
-
-		if(Luxe.input.keydown(Key.left)) {
-			Luxe.camera.pos.x -= 300 * delta;
-		}
-
-		if(enemyAttack) {
-			var rand = Math.floor(Math.random() * 3);
-			create_unit(gameFieldWidth, rows[rand].y + rows[rand].h / 2, -200, enemySide);
-			enemyAttack = false;
-		}
+		inputUpdate( delta );
+		collisionUpdate( delta );
 
 	}
 	
@@ -142,6 +121,64 @@ class Main extends luxe.Game
 			Luxe.shutdown();
 		}
 		
+	}
+
+	function inputUpdate( delta:Float ) {
+		//Create units on button presses
+		if(Luxe.input.inputreleased('select')) {
+			if( rows[0].point_inside(Luxe.mouse) ) {
+				create_unit( rows[0].x + rows[0].w / 2, gameFieldHeight, -200, playerSide );
+			} else if( rows[1].point_inside(Luxe.mouse) ) {
+				create_unit( rows[1].x + rows[1].w / 2, gameFieldHeight, -200, playerSide );
+			} else if( rows[2].point_inside(Luxe.mouse) ){
+				create_unit( rows[2].x + rows[2].w / 2, gameFieldHeight, -200, playerSide );
+			}
+		}
+
+		if(Luxe.input.keydown(Key.down)) {
+			Luxe.camera.pos.y += 300 * delta;
+		}
+
+		if(Luxe.input.keydown(Key.up)) {
+			Luxe.camera.pos.y -= 300 * delta;
+		}
+
+		if(enemyAttack) {
+			var rand = Math.floor(Math.random() * 3);
+			create_unit( rows[rand].x + rows[rand].w / 2, 0, 200, enemySide);
+			enemyAttack = false;
+		}
+	}
+
+	function collisionUpdate( delta:Float ) {
+		var collisions = [];
+		var otherCollisions = [];
+
+		for(i in units) {
+			for(a in units) {
+				if(i.get('hitbox') != null && a.get('hitbox') != null && i != a) {
+					if(theseOverlap(i.get('hitbox').hitbox , a.get('hitbox').hitbox)) {
+						collisions.push(i);
+						otherCollisions.push(a);
+					}
+				}
+			}
+		}
+
+		for(i in collisions) {
+			if(i.get('movement').velocity.y != 0) {
+				i.get('movement').velocity.y = 0;
+			}
+			
+		}
+
+	}
+
+	function theseOverlap( rect1:Rectangle, rect2:Rectangle ) {
+
+		if(rect1.overlaps(rect2)) return true;
+		return false;
+
 	}
 	
 }
