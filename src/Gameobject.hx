@@ -54,7 +54,23 @@ class Gameobject extends Sprite {
 		if(attack != null) {
 			add(attack);
 		}
+
+		events.listen('collision', on_collision);
+		events.listen('damage', on_damage);
 		
+	}
+
+	function on_collision( data:Dynamic ) {
+		health.health -= Std.int(data.from.get('attack').attack);
+		this.events.fire('damage');
+		movement.stopped = true;
+	}
+
+	function on_damage( data:Dynamic ) {
+		if(health.health <= 0) {
+			Luxe.events.fire('unit.destroy', {object: this});
+			this.destroy();
+		}
 	}
 
 	function set_hitbox(_hitbox : Hitbox) {

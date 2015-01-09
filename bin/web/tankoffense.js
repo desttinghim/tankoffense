@@ -169,6 +169,136 @@ Attack.prototype = $extend(luxe.Component.prototype,{
 	}
 	,__class__: Attack
 });
+var Button = function() {
+	this.hovered = true;
+	this.speed = 0.1;
+	this.active = true;
+	this.start = 1;
+	this.amount = 0.3;
+	luxe.Component.call(this,{ name : "button"});
+};
+Button.__name__ = true;
+Button.__super__ = luxe.Component;
+Button.prototype = $extend(luxe.Component.prototype,{
+	init: function() {
+		this.get_entity()._listen("mousemove",$bind(this,this.onmousemove));
+		this.get_entity()._listen("mouseup",$bind(this,this.onmouseup));
+	}
+	,onadded: function() {
+		this.sprite = this.get_entity();
+	}
+	,onmousemove: function(event) {
+		if(!this.active) return;
+		if(this.sprite.point_inside_AABB(event.pos)) {
+			if(!this.hovered) this.hover();
+		} else if(this.hovered) this.unhover();
+	}
+	,onmouseup: function(event) {
+		if(!this.active) return;
+		if(this.hovered) {
+			haxe.Log.trace("Button pressed!",{ fileName : "Button.hx", lineNumber : 58, className : "Button", methodName : "onmouseup"});
+			Luxe.events.queue("button",{ which : "one of them"});
+		}
+	}
+	,hover: function() {
+		this.hovered = true;
+		this.sprite.color.tween(this.speed,{ a : this.start - this.amount});
+	}
+	,unhover: function() {
+		this.hovered = false;
+		this.sprite.color.tween(this.speed,{ a : this.start});
+	}
+	,ondestroy: function() {
+		luxe.Component.prototype.ondestroy.call(this);
+		this.get_entity()._unlisten("mousemove",$bind(this,this.onmousemove));
+		this.get_entity()._unlisten("mouseup",$bind(this,this.onmouseup));
+	}
+	,onremoved: function() {
+		luxe.Component.prototype.onremoved.call(this);
+		this.get_entity()._unlisten("mousemove",$bind(this,this.onmousemove));
+		this.get_entity()._unlisten("mouseup",$bind(this,this.onmouseup));
+	}
+	,__class__: Button
+});
+var CameraDrag = function(_options) {
+	this.zoom_count = 0;
+	this.dragging = false;
+	this.zoom_max = 1;
+	this.zoom_min = .4;
+	this.zoom_speed = 0.3;
+	this.zoomable = true;
+	this.draggable = true;
+	luxe.Component.call(this,_options);
+};
+CameraDrag.__name__ = true;
+CameraDrag.__super__ = luxe.Component;
+CameraDrag.prototype = $extend(luxe.Component.prototype,{
+	init: function() {
+		this.drag_start = new phoenix.Vector();
+		this.drag_start_pos = new phoenix.Vector();
+		this.button = 1;
+		this.camera = this.get_entity();
+		if(this.camera == null) throw "CameraDrag only applies to luxe.Camera type right now.";
+		this.get_entity()._listen("mousewheel",$bind(this,this.onmousewheel));
+		this.get_entity()._listen("mousedown",$bind(this,this.onmousedown));
+		this.get_entity()._listen("mouseup",$bind(this,this.onmouseup));
+		this.get_entity()._listen("mousemove",$bind(this,this.onmousemove));
+	}
+	,onmousewheel: function(e) {
+		if(this.zoomable) {
+			if(e.y > 0) {
+				if(this.camera.get_zoom() > this.zoom_min) {
+					var _g = this.camera;
+					_g.set_zoom(_g.get_zoom() - this.zoom_speed);
+					if(this.camera.get_zoom() < this.zoom_min) this.camera.set_zoom(this.zoom_min);
+				} else this.camera.set_zoom(this.zoom_min);
+			}
+			if(e.y < 0) {
+				if(this.camera.get_zoom() < this.zoom_max) {
+					var _g1 = this.camera;
+					_g1.set_zoom(_g1.get_zoom() + this.zoom_speed);
+					if(this.camera.get_zoom() > this.zoom_max) this.camera.set_zoom(this.zoom_max);
+				} else this.camera.set_zoom(this.zoom_max);
+			}
+		}
+	}
+	,onmousedown: function(e) {
+		if(this.draggable) {
+			if(!this.dragging && e.button == this.button) {
+				this.dragging = true;
+				this.drag_start.set_xy(e.pos.x,e.pos.y);
+				this.drag_start_pos.set_xy(this.get_pos().x,this.get_pos().y);
+			}
+		}
+	}
+	,onmouseup: function(e) {
+		if(this.draggable) {
+			if(e.button == this.button && this.dragging) this.dragging = false;
+		}
+	}
+	,onmousemove: function(e) {
+		if(this.draggable && this.dragging) {
+			var diffx = (e.pos.x - this.drag_start.x) / this.camera.get_zoom();
+			var diffy = (e.pos.y - this.drag_start.y) / this.camera.get_zoom();
+			this.get_pos().set_xy(this.drag_start_pos.x - diffx,this.drag_start_pos.y - diffy);
+		}
+	}
+	,ondestroy: function() {
+		luxe.Component.prototype.ondestroy.call(this);
+		this.get_entity()._unlisten("mousewheel",$bind(this,this.onmousewheel));
+		this.get_entity()._unlisten("mousedown",$bind(this,this.onmousedown));
+		this.get_entity()._unlisten("mouseup",$bind(this,this.onmouseup));
+		this.get_entity()._unlisten("mousemove",$bind(this,this.onmousemove));
+	}
+	,onremoved: function() {
+		luxe.Component.prototype.onremoved.call(this);
+		this.get_entity()._unlisten("mousewheel",$bind(this,this.onmousewheel));
+		this.get_entity()._unlisten("mousedown",$bind(this,this.onmousedown));
+		this.get_entity()._unlisten("mouseup",$bind(this,this.onmouseup));
+		this.get_entity()._unlisten("mousemove",$bind(this,this.onmousemove));
+	}
+	,__class__: CameraDrag
+});
 var EReg = function(r,opt) {
 	opt = opt.split("u").join("");
 	this.r = new RegExp(r,opt);
@@ -1127,6 +1257,19 @@ Gameobject.prototype = $extend(luxe.Sprite.prototype,{
 		if(this.side != null) this.add(this.side);
 		if(this.health != null) this.add(this.health);
 		if(this.attack != null) this.add(this.attack);
+		this.events.listen("collision",$bind(this,this.on_collision));
+		this.events.listen("damage",$bind(this,this.on_damage));
+	}
+	,on_collision: function(data) {
+		this.health.health -= Std["int"](data.from.get("attack").attack);
+		this.events.fire("damage");
+		this.movement.stopped = true;
+	}
+	,on_damage: function(data) {
+		if(this.health.health <= 0) {
+			Luxe.events.fire("unit.destroy",{ object : this});
+			this.destroy();
+		}
 	}
 	,set_hitbox: function(_hitbox) {
 		this.hitbox = _hitbox;
@@ -1535,12 +1678,13 @@ luxe.Game.prototype = $extend(luxe.Emitter.prototype,{
 	,__class__: luxe.Game
 });
 var Main = function() {
+	this.buttonPressed = false;
+	this.units = [];
+	this.unitCount = 0;
 	this.enemySide = 4;
 	this.playerSide = 1;
-	this.enemyAttack = true;
-	this.collisionGroup = [];
+	this.enemyAttack = false;
 	this.rows = [];
-	this.units = [];
 	this.loaded = false;
 	luxe.Game.call(this);
 };
@@ -1558,26 +1702,39 @@ Main.prototype = $extend(luxe.Game.prototype,{
 	,ready: function() {
 		this.image = Luxe.loadTexture("assets/testingsquare.png");
 		this.image.set_onload($bind(this,this.assets_loaded));
-	}
-	,assets_loaded: function(_) {
-		haxe.Log.trace("Assets have been loaded.",{ fileName : "Main.hx", lineNumber : 74, className : "Main", methodName : "assets_loaded"});
-		this.image = Luxe.loadTexture("assets/testingsquare.png");
-		this.image.set_filter(phoenix.FilterType.nearest);
-		Luxe.input.bind_mouse("select",1);
 		var _g = 0;
 		while(_g < 3) {
 			var i = _g++;
 			this.rows[i] = new phoenix.Rectangle(Luxe.get_screen().w * i / 3,0,Luxe.get_screen().w / 3,Luxe.get_screen().h);
 		}
-		this.gameFieldHeight = Luxe.get_screen().h * 2;
+		this.gameFieldHeight = Luxe.get_screen().h * 3;
 		Luxe.camera.bounds = new phoenix.Rectangle(0,0,480,this.gameFieldHeight + Luxe.get_screen().h / 2);
+		Luxe.camera.get_pos().set_y(this.gameFieldHeight);
+		Luxe.camera.add(new CameraDrag({ name : "drag"}));
+		Luxe.events.listen("button",$bind(this,this.button_handle));
+		Luxe.events.listen("unit.destroy",$bind(this,this.unit_destroy));
+		this.hud_batcher = new phoenix.Batcher(Luxe.renderer,"hud_batcher");
+		var hud_view = new phoenix.Camera();
+		this.hud_batcher.view = hud_view;
+		this.hud_batcher.set_layer(2);
+		Luxe.renderer.add_batch(this.hud_batcher);
+		this.button = new luxe.Sprite({ name : "button", pos : new phoenix.Vector(Luxe.get_screen().w - 32,Luxe.get_screen().h - 32), color : new phoenix.Color().rgb(16337668), size : new phoenix.Vector(64,64), batcher : this.hud_batcher});
+		this.button.add(new Button());
+	}
+	,assets_loaded: function(_) {
+		haxe.Log.trace("Assets have been loaded.",{ fileName : "Main.hx", lineNumber : 114, className : "Main", methodName : "assets_loaded"});
+		this.image = Luxe.loadTexture("assets/testingsquare.png");
+		this.image.set_filter(phoenix.FilterType.nearest);
 		this.loaded = true;
 	}
-	,create_unit: function(xpos,ypos,speed,side) {
-		haxe.Log.trace("Unit created.",{ fileName : "Main.hx", lineNumber : 93, className : "Main", methodName : "create_unit"});
-		var unitNum = this.units.length;
-		this.units.push(new Gameobject({ name : "unit" + unitNum, texture : this.image, pos : new phoenix.Vector(xpos,ypos), size : new phoenix.Vector(64,64), movement : new phoenix.Vector(0,speed), hitbox : new phoenix.Rectangle(0,0,64,64), side : side, health : 50, attack : 11 - side}));
-		if(side == this.enemySide) this.units[unitNum].set_rotation_z(45);
+	,button_handle: function(data) {
+		this.buttonPressed = true;
+		Luxe.camera.get("drag").draggable = false;
+		Luxe.camera.get("drag").zoomable = false;
+	}
+	,unit_destroy: function(data) {
+		var x = data.object;
+		HxOverrides.remove(this.units,x);
 	}
 	,update: function(delta) {
 		if(!this.loaded) return;
@@ -1588,33 +1745,25 @@ Main.prototype = $extend(luxe.Game.prototype,{
 		if(event.keycode == snow.input.Keycodes.escape) Luxe.shutdown();
 	}
 	,inputUpdate: function(delta) {
-		if(Luxe.input.inputreleased("select")) {
-			if(this.rows[0].point_inside(Luxe.mouse)) this.create_unit(this.rows[0].x + this.rows[0].w / 2,this.gameFieldHeight,-200,this.playerSide); else if(this.rows[1].point_inside(Luxe.mouse)) this.create_unit(this.rows[1].x + this.rows[1].w / 2,this.gameFieldHeight,-200,this.playerSide); else if(this.rows[2].point_inside(Luxe.mouse)) this.create_unit(this.rows[2].x + this.rows[2].w / 2,this.gameFieldHeight,-200,this.playerSide);
-		}
-		if(Luxe.input.keydown(snow.input.Keycodes.down)) {
-			var _g = Luxe.camera.get_pos();
-			_g.set_y(_g.y + 300 * delta);
-		}
-		if(Luxe.input.keydown(snow.input.Keycodes.up)) {
-			var _g1 = Luxe.camera.get_pos();
-			_g1.set_y(_g1.y - 300 * delta);
+		if(Luxe.input.mousedown(1) && this.buttonPressed) {
+			if(this.rows[0].point_inside(Luxe.mouse)) {
+				this.create_unit(this.rows[0].x + this.rows[0].w / 2,this.gameFieldHeight,-50,this.playerSide);
+				this.enemyAttack = true;
+			} else if(this.rows[1].point_inside(Luxe.mouse)) {
+				this.create_unit(this.rows[1].x + this.rows[1].w / 2,this.gameFieldHeight,-50,this.playerSide);
+				this.enemyAttack = true;
+			} else if(this.rows[2].point_inside(Luxe.mouse)) {
+				this.create_unit(this.rows[2].x + this.rows[2].w / 2,this.gameFieldHeight,-50,this.playerSide);
+				this.enemyAttack = true;
+			}
+			this.buttonPressed = false;
+			Luxe.camera.get("drag").draggable = true;
+			Luxe.camera.get("drag").zoomable = true;
 		}
 		if(this.enemyAttack) {
 			var rand = Math.floor(Math.random() * 3);
-			this.create_unit(this.rows[rand].x + this.rows[rand].w / 2,0,200,this.enemySide);
+			this.create_unit(this.rows[rand].x + this.rows[rand].w / 2,0,50,this.enemySide);
 			this.enemyAttack = false;
-		}
-		var _g2 = 0;
-		var _g11 = this.units;
-		while(_g2 < _g11.length) {
-			var i = _g11[_g2];
-			++_g2;
-			if(i.get("health") != null) {
-				if(i.get("health").health <= 0) {
-					i.destroy();
-					HxOverrides.remove(this.units,i);
-				}
-			}
 		}
 	}
 	,collisionUpdate: function(delta) {
@@ -1631,18 +1780,29 @@ Main.prototype = $extend(luxe.Game.prototype,{
 				var a = _g3[_g2];
 				++_g2;
 				if(i.get("hitbox") != null && a.get("hitbox") != null && i != a) {
-					if(this.theseOverlap(i.get("hitbox").hitbox,a.get("hitbox").hitbox)) {
-						i.get("movement").stopped = true;
-						a.get("movement").stopped = true;
-						a.get("health").health -= i.get("attack").attack;
-					}
+					if(this.theseOverlap(i.get("hitbox").hitbox,a.get("hitbox").hitbox)) i.events.fire("collision",{ from : a, damage_amount : a.get("attack").attack});
 				}
+			}
+		}
+		var _g4 = 0;
+		var _g11 = this.units;
+		while(_g4 < _g11.length) {
+			var i1 = _g11[_g4];
+			++_g4;
+			if(HxOverrides.indexOf(collisions,i1,0) == -1) {
+				if(i1.get("movement") != null) i1.get("movement").stopped = false;
 			}
 		}
 	}
 	,theseOverlap: function(rect1,rect2) {
 		if(rect1.overlaps(rect2)) return true;
 		return false;
+	}
+	,create_unit: function(xpos,ypos,speed,side) {
+		haxe.Log.trace("Unit created.",{ fileName : "Main.hx", lineNumber : 222, className : "Main", methodName : "create_unit"});
+		var unitNum = this.units.length;
+		this.units.push(new Gameobject({ name : "unit" + this.unitCount++, texture : this.image, pos : new phoenix.Vector(xpos,ypos), size : new phoenix.Vector(64,64), movement : new phoenix.Vector(0,speed), hitbox : new phoenix.Rectangle(0,0,64,64), side : side, health : 50, attack : 11 - side}));
+		if(side == this.enemySide) this.units[unitNum].set_rotation_z(45);
 	}
 	,__class__: Main
 });
@@ -22136,5 +22296,3 @@ snow.utils.format.tools.InflateImpl.DIST_BASE_VAL_TBL = [1,2,3,4,5,7,9,13,17,25,
 snow.utils.format.tools.InflateImpl.CODE_LENGTHS_POS = [16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15];
 LuxeApp.main();
 })();
-
-//# sourceMappingURL=bin\web\tankoffense.js.map
